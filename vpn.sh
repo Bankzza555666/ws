@@ -28,7 +28,7 @@ cp /usr/lib/x86_64-linux-gnu/openvpn/plugins/openvpn-plugin-auth-pam.so /usr/lib
 sed -i 's/#AUTOSTART="all"/AUTOSTART="all"/g' /etc/default/openvpn
 
 # restart openvpn dan cek status openvpn
-systemctl enable --now openvpn-server@server-tcp-1194
+systemctl enable --now openvpn-server@server-tcp-443
 systemctl enable --now openvpn-server@server-udp-2200
 /etc/init.d/openvpn restart
 /etc/init.d/openvpn status
@@ -43,7 +43,7 @@ FRIENDLY_NAME "AJNET"
 client
 dev tun
 proto tcp
-remote xxxxxxxxx 1194 
+remote xxxxxxxxx 443 
 http-proxy xxxxxxxxx 8080
 resolv-retry infinite
 route-method exe
