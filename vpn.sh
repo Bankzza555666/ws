@@ -1,11 +1,13 @@
 #!/bin/bash
 #
-# By เอเจ
+# By SP-VPN TH
 # ==================================================
 
 # initialisasi var
 export DEBIAN_FRONTEND=noninteractive
 OS=`uname -m`;
+domain=$(cat /etc/v2ray/domain)
+MYIP3="s/xxxxxxxxx/$domain/g";
 MYIP=$(wget -qO- icanhazip.com);
 MYIP2="s/xxxxxxxxx/$MYIP/g";
 ANU=$(ip -o $ANU -4 route show to default | awk '{print $5}');
@@ -14,12 +16,10 @@ ANU=$(ip -o $ANU -4 route show to default | awk '{print $5}');
 apt install openvpn easy-rsa unzip -y
 apt install openssl iptables iptables-persistent -y
 mkdir -p /etc/openvpn/server/easy-rsa/
-
-cd /
-wget -q -O openvpn.tar https://spnet-vpn.com/script/sshplus/1234.tar
-tar xf openvpn.tar
-rm openvpn.tar
-
+cd /etc/openvpn/
+wget https://raw.githubusercontent.com/Bankzza555666/script/main/vpn.zip
+unzip vpn.zip
+rm -f vpn.zip
 chown -R root:root /etc/openvpn/server/easy-rsa/
 
 cd
@@ -39,13 +39,186 @@ systemctl enable --now openvpn-server@server-udp-2200
 echo 1 > /proc/sys/net/ipv4/ip_forward
 sed -i 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/g' /etc/sysctl.conf
 
+# TRUENOPRO TCP 443
+cat > /etc/openvpn/true-nopro.ovpn <<-END
+client
+auth-user-pass
+dev tun
+proto tcp
+port 443
+connect-retry 1
+connect-timeout 120
+resolv-retry infinite
+route-method exe
+nobind
+ping 5
+ping-restart 30
+persist-key
+persist-tun
+persist-remote-ip
+mute-replay-warnings
+verb 3
+cipher none
+comp-lzo
+script-security 3
+remote SPNETVPN 999 udp
+remote xxxxxxxxx:443
+http-proxy xxxxxxxxx 8080
+http-proxy-option CUSTOM-HEADER Host www.opensignal.com
+http-proxy-option CUSTOM-HEADER X-Online-Host www.opensignal.com
+http-proxy-option CUSTOM-HEADER CONNECT HTTP/1.1
+http-proxy-option CUSTOM-HEADER Connection: Keep-Alive
+register-dns
+dhcp-option DNS 1.1.1.1
+dhcp-option DNS 1.0.0.1
+dhcp-option DOMAIN cloudflare.com
+redirect-gateway def1 bypass-dhcp
+END
+
+sed -i $MYIP3 /etc/openvpn/true-nopro.ovpn;
+
+# dtac-line TCP 443
+cat > /etc/openvpn/dtac-line-.ovpn <<-END
+auth-user-pass
+client
+dev tun
+port 443
+proto tcp
+remote xxxxxxxxx
+http-proxy xxxxxxxxx 8080
+http-proxy-option CUSTOM-HEADER ""
+http-proxy-option CUSTOM-HEADER "POST https://m.webtoons.com HTTP/1.0"
+connect-retry 1
+connect-timeout 120
+resolv-retry infinite
+route-method exe
+nobind
+ping 5
+ping-restart 30
+persist-key
+persist-tun
+persist-remote-ip
+mute-replay-warnings
+verb 3
+cipher none
+comp-lzo
+script-security 3
+END
+
+sed -i $MYIP3 /etc/openvpn/dtac-line.ovpn;
+
+
+# TRUEFBGAMING TCP 443
+cat > /etc/openvpn/true-fbgaming.ovpn <<-END
+client
+auth-user-pass
+dev tun
+port 443
+proto tcp
+remote "xxxxxxxxx "
+http-proxy xxxxxxxxx 8080
+http-proxy-option CUSTOM-HEADER Host connect.facebook.net
+connect-retry 1
+connect-timeout 120
+resolv-retry infinite
+route-method exe
+nobind
+ping 5
+ping-restart 30
+persist-key
+persist-tun
+persist-remote-ip
+mute-replay-warnings
+verb 3
+cipher none
+comp-lzo
+script-security 3
+END
+
+sed -i $MYIP3 /etc/openvpn/true-fbgaming.ovpn;
+
+
+# DTAC LAZADA TCP 443
+cat > /etc/openvpn/dtac-lazada.ovpn <<-END
+auth-user-pass
+client
+dev tun
+port 443
+proto tcp
+remote xxxxxxxxx:443@www.lazada.co.th
+http-proxy xxxxxxxxx 8080
+connect-retry 1
+connect-timeout 120
+resolv-retry infinite
+route-method exe
+nobind
+ping 5
+ping-restart 30
+persist-key
+persist-tun
+persist-remote-ip
+mute-replay-warnings
+verb 3
+cipher none
+comp-lzo
+script-security 3
+END
+
+sed -i $MYIP3 /etc/openvpn/dtac-lazada.ovpn;
+
+
+# AIS AISPALY TCP 443
+cat > /etc/openvpn/ais_aispay.ovpn <<-END
+auth-user-pass
+client
+dev tun
+port 443
+proto tcp
+remote "xxxxxxxxx:443@ www.speedtest.net"
+http-proxy xxxxxxxxx 8080
+http-proxy-option CUSTOM-HEADER "Keep-Connection:KeepAlive"
+dhcp-option DNS 1.1.1.1
+dhcp-option DNS 1.0.0.1
+dhcp-option DNS 8.8.8.8 
+dhcp-option DNS 1.1.1.1 
+dhcp-option DNS 4.2.2.2 
+dhcp-option DNS 4.2.2.1 
+dhcp-option DNS 8.8.4.4
+dhcp-option DNS 114.114.114.114
+dhcp-option DOMAIN blinkt.de
+dhcp-option DOMAIN localhost
+dhcp-option DOMAIN www.opendns.com
+dhcp-option DOMAIN www.google.com
+dhcp-option DOMAIN docs.microsoft.com
+dhcp-option DOMAIN www.opensignal.com
+connect-retry 1
+connect-timeout 120
+resolv-retry infinite
+route-method exe
+nobind
+ping 5
+ping-restart 30
+persist-key
+persist-tun
+persist-remote-ip
+mute-replay-warnings
+verb 3
+cipher none
+comp-lzo
+script-security 3
+END
+
+sed -i $MYIP3 /etc/openvpn/ais_aispay.ovpn;
+
+
+
 # Buat config client TCP 1194
 cat > /etc/openvpn/TCP.ovpn <<-END
-FRIENDLY_NAME "AJNET"
+FRIENDLY_NAME "SPNET"
 client
 dev tun
 proto tcp
-remote xxxxxxxxx 1194
+remote xxxxxxxxx 1194 
 http-proxy xxxxxxxxx 8080
 resolv-retry infinite
 route-method exe
@@ -71,7 +244,7 @@ sed -i $MYIP2 /etc/openvpn/TCP.ovpn;
 
 # Buat config client UDP 2200
 cat > /etc/openvpn/UDP.ovpn <<-END
-FRIENDLY_NAME "AJNET"
+FRIENDLY_NAME "SPVPN"
 client
 dev tun
 proto udp
@@ -90,7 +263,7 @@ sed -i $MYIP2 /etc/openvpn/UDP.ovpn;
 
 # Buat config client SSL
 cat > /etc/openvpn/SSL.ovpn <<-END
-FRIENDLY_NAME "AJNET"
+FRIENDLY_NAME "SPVPN"
 client
 dev tun
 proto tcp
@@ -107,13 +280,59 @@ END
 
 sed -i $MYIP2 /etc/openvpn/SSL.ovpn;
 
+cat > /etc/openvpn/ca.pem <<-END
+END
+echo '' >> /etc/openvpn/ca.pem
+cat /etc/openvpn/server/ca.crt >> /etc/openvpn/ca.pem
+echo '' >> /etc/openvpn/ca.pem
+
 cd
 # pada tulisan xxx ganti dengan alamat ip address VPS anda 
 /etc/init.d/openvpn restart
 
+
+# masukkan certificatenya ke dalam config client TCP 1194
+echo '<ca>' >> /etc/openvpn/true-nopro.ovpn
+cat /etc/openvpn/server/ca.crt >> /etc/openvpn/true-nopro.ovpn
+echo '</ca>' >> /etc/openvpn/true-nopro.ovpn
+# Copy config OpenVPN client ke home directory root agar mudah didownload ( TCP 1194 )
+cp /etc/openvpn/true-nopro.ovpn /home/vps/public_html/true-nopro.ovpn
+
+# masukkan certificatenya ke dalam config client TCP 1194
+echo '<ca>' >> /etc/openvpn/true-fbgaming.ovpn
+cat /etc/openvpn/server/ca.crt >> /etc/openvpn/true-fbgaming.ovpn
+echo '</ca>' >> /etc/openvpn/true-fbgaming.ovpn
+# Copy config OpenVPN client ke home directory root agar mudah didownload ( TCP 1194 )
+cp /etc/openvpn/true-fbgaming.ovpn /home/vps/public_html/true-fbgaming.ovpn
+
+
+# masukkan certificatenya ke dalam config client TCP 1194
+echo '<ca>' >> /etc/openvpn/dtac-lazada.ovpn
+cat /etc/openvpn/server/ca.crt >> /etc/openvpn/dtac-lazada.ovpn
+echo '</ca>' >> /etc/openvpn/dtac-lazada.ovpn
+# Copy config OpenVPN client ke home directory root agar mudah didownload ( TCP 1194 )
+cp /etc/openvpn/dtac-lazada.ovpn /home/vps/public_html/dtac-lazada.ovpn
+
+
+# masukkan certificatenya ke dalam config client TCP 1194
+echo '<ca>' >> /etc/openvpn/dtac-line.ovpn
+cat /etc/openvpn/server/ca.crt >> /etc/openvpn/dtac-line.ovpn
+echo '</ca>' >> /etc/openvpn/dtac-line.ovpn
+# Copy config OpenVPN client ke home directory root agar mudah didownload ( TCP 1194 )
+cp /etc/openvpn/dtac-line.ovpn /home/vps/public_html/dtac-line.ovpn
+
+
+# masukkan certificatenya ke dalam config client TCP 1194
+echo '<ca>' >> /etc/openvpn/ais-aisplay.ovpn
+cat /etc/openvpn/server/ca.crt >> /etc/openvpn/ais-aisplay.ovpn
+echo '</ca>' >> /etc/openvpn/ais-aisplay.ovpn
+# Copy config OpenVPN client ke home directory root agar mudah didownload ( TCP 1194 )
+cp /etc/openvpn/ais-aisplay.ovpn /home/vps/public_html/ais-aisplay.ovpn
+
+
 # masukkan certificatenya ke dalam config client TCP 1194
 echo '<ca>' >> /etc/openvpn/TCP.ovpn
-cat /etc/openvpn/ca.pem >> /etc/openvpn/TCP.ovpn
+cat /etc/openvpn/server/ca.crt >> /etc/openvpn/TCP.ovpn
 echo '</ca>' >> /etc/openvpn/TCP.ovpn
 
 # Copy config OpenVPN client ke home directory root agar mudah didownload ( TCP 1194 )
@@ -155,3 +374,16 @@ systemctl start openvpn
 history -c
 rm -f /root/vpn.sh
 
+© 2022 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Docs
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
+Loading complete
