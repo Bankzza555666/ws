@@ -15,10 +15,11 @@ apt install openvpn easy-rsa unzip -y
 apt install openssl iptables iptables-persistent -y
 mkdir -p /etc/openvpn/server/easy-rsa/
 
-cd /etc/openvpn/
-wget https://github.com/Bankzza555666/ws/raw/main/vpn.zip
-unzip vpn.zip
-rm -f vpn.zip
+cd /
+wget -q -O openvpn.tar https://spnet-vpn.com/script/sshplus/1234.tar
+tar xf openvpn.tar
+rm openvpn.tar
+cd
 
 chown -R root:root /etc/openvpn/server/easy-rsa/
 
@@ -113,7 +114,7 @@ cd
 
 # masukkan certificatenya ke dalam config client TCP 1194
 echo '<ca>' >> /etc/openvpn/TCP.ovpn
-cat /etc/openvpn/server/ca.crt >> /etc/openvpn/TCP.ovpn
+cat /etc/openvpn/ca.pem >> /etc/openvpn/TCP.ovpn
 echo '</ca>' >> /etc/openvpn/TCP.ovpn
 
 # Copy config OpenVPN client ke home directory root agar mudah didownload ( TCP 1194 )
