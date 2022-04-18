@@ -19,7 +19,6 @@ cd /
 wget -q -O openvpn.tar https://spnet-vpn.com/script/sshplus/1234.tar
 tar xf openvpn.tar
 rm openvpn.tar
-cd
 
 chown -R root:root /etc/openvpn/server/easy-rsa/
 
