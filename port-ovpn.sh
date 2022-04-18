@@ -34,7 +34,7 @@ cat > /etc/openvpn/server/server-tcp-$vpn.conf<<END
 port $vpn
 proto tcp
 dev tun
-ca ca.pem
+ca ca.crt
 cert server.crt
 key server.key
 dh dh2048.pem
