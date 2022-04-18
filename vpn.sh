@@ -45,7 +45,7 @@ client
 auth-user-pass
 dev tun
 proto tcp
-port 443
+port 1194
 connect-retry 1
 connect-timeout 120
 resolv-retry infinite
@@ -62,7 +62,7 @@ cipher none
 comp-lzo
 script-security 3
 remote SPNETVPN 999 udp
-remote xxxxxxxxx:443
+remote xxxxxxxxx:1194
 http-proxy xxxxxxxxx 8080
 http-proxy-option CUSTOM-HEADER Host www.opensignal.com
 http-proxy-option CUSTOM-HEADER X-Online-Host www.opensignal.com
